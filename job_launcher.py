@@ -1,6 +1,8 @@
 import os 
 import subprocess
 import time
+import os
+import shutil
 
 def launch_job(config_str, source_dir, source_script):
     #os.system("python3 fancy_launcher.py arg1 arg2 arg3")
@@ -40,23 +42,40 @@ def parse_config_into_argparse_format_and_submit_job(config_dict, source_dir, so
     launch_job(args, source_script=source_script, source_dir=source_dir)
 
     
+def create_directory(directory_path):
+    # Check if the directory already exists
+    if os.path.exists(directory_path):
+        print(f"Directory '{directory_path}' already exists, deleting it...")
+        shutil.rmtree(directory_path)
+    else:
+        print(f"Creating directory '{directory_path}'...")
+
+    # Create the directory
+    os.makedirs(directory_path)
 
 
 def loop_over_images():
     #source_dir= '/Users/bradlystadie/Desktop/style-transfer-shit/fast-style-transfer-master/'
     #source_script = 'style.py'
     #source_script = 'example_job.py'
-    source_dir = ''
     source_script = 'style.py'
-    source_images = ['la_muse.jpg', 'the_scream.jpg']
+    source_dir = ''
+    #source_script = 'style.py'
+    #source_images = ['la_muse.jpg', 'the_scream.jpg']
+    source_images = ['camel.jpg', 'music_book.jpg', 'mystic_moon.jpg', 'abstract.jpeg', 'clocks.jpeg', 'la_muse.jpg', 'red_woman.jpg',
+                     'weird_kiss.jpg', 'sketch.jpg', 'rain_princess.jpeg', 'the_scream.jpeg', 'storm_ocean.jpeg', 'japan.jpg',
+                     'starry_night.jpg', 'sword_art.jpg', 'waves.jpeg', 'bear.jpg', 'fire_bird.jpg', 'cow.png', 'elephants.jpg',
+                     'pink_flamingo.jpg', 'purple.jpg', 'summer_family.jpg']
     for img in source_images:
+        create_directory('/home/ubuntu/test_out/' + img.split('.')[0])
+        create_directory('/home/ubuntu/checks/' + img.split('.')[0])
         param_dict = {}
-        param_dict['style'] = '/home/ubuntu/' + img
+        param_dict['style'] = '/home/ubuntu/imgs/' + img
         param_dict['checkpoint-dir'] = '/home/ubuntu/checks/' + img.split('.')[0]
-        param_dict['test'] = '/home/ubuntu/test.png'
-        param_dict['test-dir'] = '/home/ubuntu/test_out' + img.split('.')[0]
+        param_dict['test'] = '/home/ubuntu/test.jpg'
+        param_dict['test-dir'] = '/home/ubuntu/test_out/' + img.split('.')[0]
         param_dict['style-weight'] = 2e2
-        param_dict['checkpoint-iterations'] = 1000
+        param_dict['checkpoint-iterations'] = 10
         param_dict['batch-size'] = 20
         parse_config_into_argparse_format_and_submit_job(param_dict, source_dir, source_script)
 
